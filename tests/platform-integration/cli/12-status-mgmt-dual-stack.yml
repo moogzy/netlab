@@ -1,0 +1,30 @@
+---
+message: |
+  This test checks that netlab status displays both IPv4 and IPv6
+  management addresses for dual-stack nodes.
+
+plugin: [ files ]
+provider: clab
+defaults.device: linux
+
+defaults.addressing.mgmt.ipv6: 2001:db8:121::/64
+
+defaults.netlab.integration:
+  skip: [ initial ]
+  validate: bash validate.sh
+
+nodes.x:
+  mgmt.ipv4: 192.168.121.11
+  mgmt.ipv6: 2001:db8:121::11
+
+links: [ x ]
+
+files:
+  validate.sh: |
+    #!/bin/bash
+    set -e
+    netlab status >status.out
+    grep "mgmt" status.out >/dev/null
+    grep "192.168.121.11" status.out >/dev/null
+    grep "2001:db8:121::11" status.out >/dev/null
+    echo "netlab status displays IPv4 and IPv6 management addresses"

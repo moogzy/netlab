@@ -1,0 +1,26 @@
+---
+message: |
+  This test checks that netlab status displays an IPv4 management
+  address for an IPv4-only node.
+
+plugin: [ files ]
+provider: clab
+defaults.device: linux
+
+defaults.netlab.integration:
+  skip: [ initial ]
+  validate: bash validate.sh
+
+nodes.x:
+  mgmt.ipv4: 192.168.121.21
+
+links: [ x ]
+
+files:
+  validate.sh: |
+    #!/bin/bash
+    set -e
+    netlab status >status.out
+    grep "mgmt" status.out >/dev/null
+    grep "192.168.121.21" status.out >/dev/null
+    echo "netlab status displays IPv4-only management addresses"
